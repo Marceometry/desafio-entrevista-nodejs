@@ -7,10 +7,13 @@ import {
   Param,
   Delete,
 } from '@nestjs/common'
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 import { VehicleService } from './vehicle.service'
 import { CreateVehicleDto } from './dto/create-vehicle.dto'
 import { UpdateVehicleDto } from './dto/update-vehicle.dto'
 
+@ApiBearerAuth()
+@ApiTags('Veículos')
 @Controller('vehicle')
 export class VehicleController {
   constructor(private readonly vehicleService: VehicleService) {}
