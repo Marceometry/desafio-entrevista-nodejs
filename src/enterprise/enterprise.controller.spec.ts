@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { TypeOrmConfigModule } from '../typeorm/typeorm.module'
 import { EnterpriseController } from './enterprise.controller'
 import { EnterpriseService } from './enterprise.service'
-import { TypeOrmModule } from '@nestjs/typeorm'
 import { Enterprise } from './entities/enterprise.entity'
 
 describe('EnterpriseController', () => {
@@ -9,15 +10,7 @@ describe('EnterpriseController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot({
-          type: 'sqlite',
-          database: ':memory:',
-          synchronize: true,
-          autoLoadEntities: true,
-        }),
-        TypeOrmModule.forFeature([Enterprise]),
-      ],
+      imports: [TypeOrmConfigModule, TypeOrmModule.forFeature([Enterprise])],
       controllers: [EnterpriseController],
       providers: [EnterpriseService],
     }).compile()
