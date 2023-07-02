@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm'
+import { Record } from '../../record/entities/record.entity'
 
 @Entity()
 export class Enterprise {
@@ -22,4 +23,7 @@ export class Enterprise {
 
   @Column()
   carParkingSpots: number
+
+  @OneToMany(() => Record, (record) => record.enterprise)
+  records: number[]
 }
