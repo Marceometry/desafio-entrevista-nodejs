@@ -1,16 +1,35 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { TypeOrmConfigModule } from '../typeorm/typeorm.module'
+import { typeOrmTestConfig } from '../typeorm/typeorm.config'
 import { EnterpriseController } from './enterprise.controller'
 import { EnterpriseService } from './enterprise.service'
 import { Enterprise } from './entities/enterprise.entity'
+import { CreateEnterpriseDto } from './dto/create-enterprise.dto'
+
+export const createEnterpriseMock: CreateEnterpriseDto = {
+  name: 'Teste',
+  cnpj: '000',
+  phone: '999',
+  address: 'Avenida 1',
+  carParkingSpots: 1,
+  motorbikeParkingSpots: 1,
+}
+
+export const enterpriseMock: Enterprise = {
+  id: 1,
+  records: [],
+  ...createEnterpriseMock,
+}
 
 describe('EnterpriseController', () => {
   let controller: EnterpriseController
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [TypeOrmConfigModule, TypeOrmModule.forFeature([Enterprise])],
+      imports: [
+        TypeOrmModule.forRoot(typeOrmTestConfig),
+        TypeOrmModule.forFeature([Enterprise]),
+      ],
       controllers: [EnterpriseController],
       providers: [EnterpriseService],
     }).compile()
@@ -19,14 +38,7 @@ describe('EnterpriseController', () => {
   })
 
   it('should create, update, read and delete all enterprises', async () => {
-    const createdEnterprise = await controller.create({
-      name: 'Teste',
-      cnpj: '000',
-      address: 'string',
-      phone: '999',
-      motorbikeParkingSpots: 10,
-      carParkingSpots: 5,
-    })
+    const createdEnterprise = await controller.create(createEnterpriseMock)
     const id = String(createdEnterprise.id)
 
     const name = 'Teste 1'

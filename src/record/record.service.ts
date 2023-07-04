@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
+import { resetMinutesAndSeconds } from '../utils/date'
 import { AddRecordEntryDto } from './dto/add-record-entry.dto'
 import { AddRecordExitDto } from './dto/add-record-exit.dto'
 import { Record } from './entities/record.entity'
@@ -12,6 +13,10 @@ export class RecordService {
     @InjectRepository(Record)
     private recordsRepository: Repository<Record>,
   ) {}
+
+  findAll() {
+    return this.recordsRepository.find()
+  }
 
   recordEntry({ vehicle, enterprise, timestamp }: AddRecordEntryDto) {
     const data = { vehicle, enterprise, entry_timestamp: timestamp }
@@ -27,5 +32,50 @@ export class RecordService {
       .createQueryBuilder('record')
       .where('enterpriseId = :id', { id: enterpriseId })
       .getMany()
+  }
+
+  async getSummary(getRecordsByEnterpriseDto: GetRecordsByEnterpriseDto) {
+    const records = await this.findByEnterprise(getRecordsByEnterpriseDto)
+    return records.reduce(
+      (acc, record) => ({
+        entries: acc.entries + 1,
+        exits: record.exit_timestamp ? acc.exits + 1 : acc.exits,
+      }),
+      { entries: 0, exits: 0 },
+    )
+  }
+
+  async getSummaryByHour(getRecordsByEnterpriseDto: GetRecordsByEnterpriseDto) {
+    const records = await this.findByEnterprise(getRecordsByEnterpriseDto)
+
+    const summary = records.reduce((acc, record) => {
+      const entryTime = resetMinutesAndSeconds(record.entry_timestamp)
+      if (!acc[entryTime]) {
+        acc[entryTime] = {
+          hour: entryTime,
+          entries: 0,
+          exits: 0,
+        }
+      }
+      acc[entryTime].entries++
+
+      if (record.exit_timestamp) {
+        const exitTime = resetMinutesAndSeconds(record.exit_timestamp)
+        if (!acc[exitTime]) {
+          acc[exitTime] = {
+            hour: exitTime,
+            entries: 0,
+            exits: 0,
+          }
+        }
+        acc[exitTime].exits++
+      }
+
+      return acc
+    }, {})
+
+    return Object.values(summary).sort((a: any, b: any) => {
+      return new Date(a.hour).getTime() - new Date(b.hour).getTime()
+    }) as Array<{ hour: Date; entries: number; exits: number }>
   }
 }

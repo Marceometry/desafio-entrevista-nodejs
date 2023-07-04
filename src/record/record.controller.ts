@@ -11,6 +11,11 @@ import { GetRecordsByEnterpriseDto } from './dto/get-records-by-enterprise.dto'
 export class RecordController {
   constructor(private readonly recordService: RecordService) {}
 
+  @Get()
+  findAll() {
+    return this.recordService.findAll()
+  }
+
   @Post('entry')
   recordEntry(@Body() addRecordEntryDto: AddRecordEntryDto) {
     return this.recordService.recordEntry(addRecordEntryDto)
@@ -21,10 +26,15 @@ export class RecordController {
     return this.recordService.recordExit(addRecordExitDto)
   }
 
-  @Get()
-  findByEnterprise(
+  @Get('summary')
+  getSummary(@Body() getRecordsByEnterpriseDto: GetRecordsByEnterpriseDto) {
+    return this.recordService.getSummary(getRecordsByEnterpriseDto)
+  }
+
+  @Get('summary/hour')
+  getSummaryByHour(
     @Body() getRecordsByEnterpriseDto: GetRecordsByEnterpriseDto,
   ) {
-    return this.recordService.findByEnterprise(getRecordsByEnterpriseDto)
+    return this.recordService.getSummaryByHour(getRecordsByEnterpriseDto)
   }
 }

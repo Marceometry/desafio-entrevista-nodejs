@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm'
+import { Enterprise } from '../../enterprise/entities/enterprise.entity'
 import { Vehicle } from '../../vehicle/entities/vehicle.entity'
-import { Enterprise } from 'src/enterprise/entities/enterprise.entity'
 
 @Entity()
 export class Record {

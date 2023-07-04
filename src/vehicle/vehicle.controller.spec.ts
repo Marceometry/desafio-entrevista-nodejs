@@ -1,16 +1,34 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { TypeOrmConfigModule } from '../typeorm/typeorm.module'
+import { typeOrmTestConfig } from '../typeorm/typeorm.config'
 import { VehicleController } from './vehicle.controller'
 import { VehicleService } from './vehicle.service'
 import { Vehicle } from './entities/vehicle.entity'
+import { CreateVehicleDto } from './dto/create-vehicle.dto'
+
+export const createVehicleMock: CreateVehicleDto = {
+  brand: 'Teste',
+  color: 'black',
+  model: 'v1',
+  plate: '999',
+  type: 'car',
+}
+
+export const vehicleMock: Vehicle = {
+  id: 1,
+  records: [],
+  ...createVehicleMock,
+}
 
 describe('VehicleController', () => {
   let controller: VehicleController
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [TypeOrmConfigModule, TypeOrmModule.forFeature([Vehicle])],
+      imports: [
+        TypeOrmModule.forRoot(typeOrmTestConfig),
+        TypeOrmModule.forFeature([Vehicle]),
+      ],
       controllers: [VehicleController],
       providers: [VehicleService],
     }).compile()
@@ -19,13 +37,7 @@ describe('VehicleController', () => {
   })
 
   it('should create, update, read and delete all vehicles', async () => {
-    const createdVehicle = await controller.create({
-      brand: 'string',
-      model: 'string',
-      color: 'string',
-      plate: 'string',
-      type: 'car',
-    })
+    const createdVehicle = await controller.create(createVehicleMock)
     const id = String(createdVehicle.id)
 
     const brand = 'Teste 1'
