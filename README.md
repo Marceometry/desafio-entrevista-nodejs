@@ -1,6 +1,10 @@
 <h1 align="center">Parking Lot API</h1>
 <p align="center">Uma API feita com NestJS para controle de estacionamentos.</p>
 
+## Desafio
+
+[Link](https://github.com/DrConsulta/desafio-entrevista-nodejs) para a descrição do desafio.
+
 ## Descrição
 
 API construída em cima do framework [NestJS](https://github.com/nestjs/nest), com o objetivo de gerenciar estacionamentos para carros e motos.
