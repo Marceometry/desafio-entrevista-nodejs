@@ -1,73 +1,258 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+<h1 align="center">Parking Lot API</h1>
+<p align="center">Uma API feita com NestJS para controle de estacionamentos.</p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Descrição
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+API construída em cima do framework [NestJS](https://github.com/nestjs/nest), com o objetivo de gerenciar estacionamentos para carros e motos.
 
-## Description
+## Tecnologias
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- [Typescript](https://typescriptlang.org/)
+- [NestJS](https://github.com/nestjs/nest)
+- [TypeORM](https://typeorm.io/)
+- [Swagger](https://swagger.io/)
 
-## Installation
+## Instalação
 
 ```bash
-$ yarn install
+$ yarn install | npm install
 ```
 
-## Running the app
+## Banco de dados
+
+Crie um arquivo `.env` com os seguintes dados:
+
+```bash
+DB_HOST='your_db_host'
+DB_PORT=your_db_port
+DB_USERNAME='your_db_username'
+DB_PASSWORD='your_db_password'
+DB_DATABASE='your_db_database'
+JWT_SECRET='your_jwt_secret'
+```
+
+## Rodando o app
+
+Porta padrão: `3000`
 
 ```bash
 # development
-$ yarn run start
+$ yarn start
 
 # watch mode
-$ yarn run start:dev
+$ yarn start:dev
 
 # production mode
-$ yarn run start:prod
+$ yarn start:prod
 ```
 
-## Test
+## Testes
 
 ```bash
 # unit tests
-$ yarn run test
-
-# e2e tests
-$ yarn run test:e2e
+$ yarn test
 
 # test coverage
-$ yarn run test:cov
+$ yarn test:cov
 ```
 
-## Support
+## Principais rotas
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+<hr />
 
-## Stay in touch
+GET `/api`
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Para ver a documentação de todos os endpoints, basta acessar a interface do Swagger.
 
-## License
+<hr />
 
-Nest is [MIT licensed](LICENSE).
+POST `/auth/login`
+
+Simula um processo de login e, caso o valor da senha seja `"1234"`, retorna um `access_token`.
+
+Body
+
+```bash
+{
+  "password": "1234"
+}
+```
+
+Response
+
+```bash
+{
+	"access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoidXNlciAxIiwiaWF0IjoxNjg4NjU1NTYxLCJleHAiOjE2ODg3NDE5NjF9.WTyfBXBCjVycPv9UOKKWcT0gC1DwzGBpHnQ3Rz87L8M"
+}
+```
+
+<hr />
+
+POST `/enterprise`
+
+Cadastra uma empresa (estacionamento).
+
+Body
+
+```bash
+{
+  "name": "Teste",
+  "cnpj": "00000000000000",
+  "phone": "99999999999",
+  "address": "Rua Teste",
+  "motorbikeParkingSpots": 10,
+  "carParkingSpots": 5
+}
+```
+
+Response
+
+```bash
+{
+  "name": "Teste",
+  "cnpj": "00000000000000",
+  "phone": "99999999999",
+  "address": "Rua Teste",
+  "motorbikeParkingSpots": 10,
+  "carParkingSpots": 5,
+  "id": 1
+}
+```
+
+<hr />
+
+POST `/vehicle`
+
+Cadastra um veículo.
+
+Body
+
+```bash
+{
+  "brand": "Marca teste",
+  "model": "Modelo teste",
+  "color": "Branco",
+  "plate": "aaa1a11",
+  "type": "car" // "car" | "motorbike"
+}
+```
+
+Response
+
+```bash
+{
+  "brand": "Marca teste",
+  "model": "Modelo teste",
+  "color": "Branco",
+  "plate": "aaa1a11",
+  "type": "car",
+  "id": 1
+}
+```
+
+<hr />
+
+POST `/record/entry`
+
+Cadastra a entrada de um veículo em um estacionamento.
+
+Body
+
+```bash
+{
+	"vehicle": 1,
+	"enterprise": 1,
+	"timestamp": "2023-08-02T10:00:05.000Z"
+}
+```
+
+Response
+
+```bash
+{
+	"vehicle": 1,
+	"enterprise": 1,
+	"entry_timestamp": "2023-08-02T10:00:05.000Z",
+	"exit_timestamp": null,
+	"id": 1
+}
+```
+
+<hr />
+
+POST `/record/exit`
+
+Adiciona o horário de saída a um registro.
+
+Body
+
+```bash
+{
+	"timestamp": "2023-08-02T10:15:30.000Z",
+	"id": 1
+}
+```
+
+Response
+
+```bash
+{
+	"affected": 1
+}
+```
+
+<hr />
+
+GET `/record/summary`
+
+Retorna o resumo da quantidade de entradas e saídas totais de um estacionamento.
+
+Body
+
+```bash
+{
+	"enterpriseId": 1
+}
+```
+
+Response
+
+```bash
+{
+	"entries": 10,
+	"exits": 5
+}
+```
+
+<hr />
+
+GET `/record/summary/hour`
+
+Retorna o resumo da quantidade de entradas e saídas de um estacionamento agrupados por hora.
+
+Body
+
+```bash
+{
+	"enterpriseId": 1
+}
+```
+
+Response
+
+```bash
+[
+	{
+		"hour": "2023-08-02T04:00:00.000Z",
+		"entries": 4,
+		"exits": 1
+	},
+	{
+		"hour": "2023-08-02T05:00:00.000Z",
+		"entries": 2,
+		"exits": 5
+	}
+]
+```
+
+<hr />
