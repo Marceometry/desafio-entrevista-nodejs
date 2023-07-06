@@ -17,8 +17,12 @@ export class RecordController {
   }
 
   @Post('entry')
-  recordEntry(@Body() addRecordEntryDto: AddRecordEntryDto) {
-    return this.recordService.recordEntry(addRecordEntryDto)
+  async recordEntry(@Body() addRecordEntryDto: AddRecordEntryDto) {
+    try {
+      return this.recordService.recordEntry(addRecordEntryDto)
+    } catch (error) {
+      return error
+    }
   }
 
   @Post('exit')

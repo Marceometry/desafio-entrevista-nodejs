@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { resetMinutesAndSeconds } from '../utils/date'
+import { EnterpriseService } from '../enterprise/enterprise.service'
+import { VehicleService } from '../vehicle/vehicle.service'
 import { AddRecordEntryDto } from './dto/add-record-entry.dto'
 import { AddRecordExitDto } from './dto/add-record-exit.dto'
 import { Record } from './entities/record.entity'
@@ -12,13 +14,31 @@ export class RecordService {
   constructor(
     @InjectRepository(Record)
     private recordsRepository: Repository<Record>,
+    private enterprisesService: EnterpriseService,
+    private vehiclesService: VehicleService,
   ) {}
 
   findAll() {
     return this.recordsRepository.find()
   }
 
-  recordEntry({ vehicle, enterprise, timestamp }: AddRecordEntryDto) {
+  async recordEntry({ vehicle, enterprise, timestamp }: AddRecordEntryDto) {
+    const { type } = await this.vehiclesService.findOne(vehicle)
+
+    const { carParkingSpots, motorbikeParkingSpots } =
+      await this.enterprisesService.findOne(enterprise)
+
+    const { entries, exits } = await this.getSummary({
+      enterpriseId: enterprise,
+    })
+
+    const spots = type === 'car' ? carParkingSpots : motorbikeParkingSpots
+    const occupiedSpots = entries - exits
+    const hasEmptySpots = occupiedSpots < spots
+
+    if (!hasEmptySpots) {
+      throw new BadRequestException('Não há vagas disponíveis')
+    }
     const data = { vehicle, enterprise, entry_timestamp: timestamp }
     return this.recordsRepository.save(data)
   }
